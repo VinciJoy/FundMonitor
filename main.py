@@ -15,6 +15,6 @@ if __name__ == '__main__':
 
     fundMonitor()
     scheduler = BlockingScheduler()
-    scheduler.add_job(fundMonitor, 'cron', day_of_week='0-4', hour=22, minute=00)
+    scheduler.add_job(fundMonitor, 'cron', day_of_week='0-4', hour=8, minute=59)
     scheduler.start()
 

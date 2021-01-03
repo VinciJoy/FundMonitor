@@ -11,7 +11,8 @@ def fundMonitor():
     print("基金监控启动成功!")
     text = ''
     flag = 1
-    while flag == 1:
+    times = 0
+    while flag == 1 and times < 6:
         flag = 0
         for holdFund in fundList:
             f = requests.get(
@@ -28,15 +29,19 @@ def fundMonitor():
 
         if flag == 1:
             print("基金尚未更新!")
-            time.sleep(60 * 5)
-    smtp = smtplib.SMTP()
-    smtp.connect(senderIMAP, 25)
-    smtp.login(senderEmailAddress, senderAuthCode)
-    msg = MIMEMultipart('mixed')
-    msg['Subject'] = subject
-    msg['From'] = '{} <{}>'.format(senderEmailAddress, senderEmailAddress)
-    msg['To'] = receiverEmailAddress
-    msg.attach(MIMEText(text, 'plain', 'utf-8'))
-    smtp.sendmail(senderEmailAddress, receiverEmailAddress, msg.as_string())
-    smtp.quit()
-    print("今日日报发送结束!")
+            times += 1
+            time.sleep(60 * 30)
+    if text:
+        smtp = smtplib.SMTP()
+        smtp.connect(senderIMAP, 25)
+        smtp.login(senderEmailAddress, senderAuthCode)
+        msg = MIMEMultipart('mixed')
+        msg['Subject'] = subject
+        msg['From'] = '{} <{}>'.format(senderEmailAddress, senderEmailAddress)
+        msg['To'] = receiverEmailAddress
+        msg.attach(MIMEText(text, 'plain', 'utf-8'))
+        smtp.sendmail(senderEmailAddress, receiverEmailAddress, msg.as_string())
+        smtp.quit()
+        print("今日日报发送结束!")
+    else:
+        print("今日休市!")
