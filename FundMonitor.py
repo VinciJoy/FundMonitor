@@ -28,7 +28,7 @@ def fundMonitor():
             text = text + "{}:{}%\n".format(fundName, round(earningPercent, 2))
 
         if flag == 1:
-            print("基金尚未更新!")
+            print("今日基金尚未更新!")
             times += 1
             time.sleep(60 * 30)
     if text:
