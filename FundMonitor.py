@@ -1,8 +1,6 @@
 import json
-import os
 import smtplib
 import time
-from datetime import date
 import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
