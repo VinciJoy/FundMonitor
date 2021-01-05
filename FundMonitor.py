@@ -1,4 +1,5 @@
 import json
+import os
 import smtplib
 import time
 from datetime import date
@@ -6,22 +7,40 @@ import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from config import *
+from pathlib import Path
 
 def fundMonitor():
     print("基金监控启动成功!")
     text = ''
     flag = 1
     times = 0
+    cachePath = Path("./cache")
+    today = None
+    if not cachePath.exists():
+        with open(cachePath, "w") as f:
+            f.write("1970-1-1")
+
+    with open(cachePath, "r") as f:
+        lastDate = f.read()
+
+    print("上次获取基金时间：{}".format(lastDate))
+
     while flag == 1 and times < 6:
         flag = 0
         for holdFund in fundList:
-            f = requests.get(
-                'https://stock.finance.sina.com.cn/fundInfo/api/openapi.php/CaihuiFundInfoService.getNav?symbol={}'.format(
-                    holdFund[0]))
+            try:
+                f = requests.get(
+                    'https://stock.finance.sina.com.cn/fundInfo/api/openapi.php/CaihuiFundInfoService.getNav?symbol={}'.format(
+                        holdFund[0]))
+            except Exception as e:
+                print("获取基金数据失败：{}".format(e))
+                time.sleep(60 * 5)
+                break
             fund = json.loads(f.content)
-            if not (fund['result']['data']['data'][0]['fbrq'].split(" ")[0] == str(date.today())):
+            if fund['result']['data']['data'][0]['fbrq'] == lastDate:
                 flag = 1
                 break
+            today = fund['result']['data']['data'][0]['fbrq']
             fundData = fund['result']['data']['data'][0]
             earningPercent = (float(fundData['jjjz']) * 100 - float(holdFund[1]) * 100) / float(holdFund[1])
             fundName = holdFund[2]
@@ -42,6 +61,8 @@ def fundMonitor():
         msg.attach(MIMEText(text, 'plain', 'utf-8'))
         smtp.sendmail(senderEmailAddress, receiverEmailAddress, msg.as_string())
         smtp.quit()
+        with open(cachePath, "w") as f:
+            f.write(today)
         print("今日日报发送结束!")
     else:
         print("今日休市!")
