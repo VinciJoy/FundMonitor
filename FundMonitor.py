@@ -33,6 +33,8 @@ def fundMonitor():
             except Exception as e:
                 print("获取基金数据失败：{}".format(e))
                 time.sleep(60 * 5)
+                flag = 1
+                times -= 1
                 break
             fund = json.loads(f.content)
             if fund['result']['data']['data'][0]['fbrq'] == lastDate:
