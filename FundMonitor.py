@@ -9,7 +9,6 @@ from pathlib import Path
 
 def fundMonitor():
     print("基金监控启动成功!")
-    text = ''
     flag = 1
     times = 0
     cachePath = Path("./cache")
@@ -24,6 +23,7 @@ def fundMonitor():
     print("上次获取基金时间：{}".format(lastDate))
 
     while flag == 1 and times < 6:
+        text = ''
         flag = 0
         for holdFund in fundList:
             try:
