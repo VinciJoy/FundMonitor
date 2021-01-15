@@ -44,7 +44,7 @@ def fundMonitor():
             fundData = fund['result']['data']['data'][0]
             earningPercent = (float(fundData['jjjz']) * 100 - float(holdFund[1]) * 100) / float(holdFund[1])
             fundName = holdFund[2]
-            text = text + "{}:{}%\n".format(fundName, round(earningPercent, 2))
+            text = text + "{}:{}%\r\n".format(fundName, round(earningPercent, 2))
 
         if flag == 1:
             print("今日基金尚未更新!")
